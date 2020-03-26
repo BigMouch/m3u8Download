@@ -63,9 +63,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        // dirPath = Environment.getDownloadCacheDirectory().getPath()+"/log/";
-        dirPath = this.getExternalFilesDir(null).getPath() + "/log/";
+        dirPath = Constant.PATH;
+       // dirPath = this.getExternalFilesDir(null).getPath() ;
         Log.d("M3U8Log", "exists: " + (new File(dirPath).exists()));
+        Log.d("M3U8Log", dirPath);
         //common config !
         M3U8DownloaderConfig
                 .build(getApplicationContext())
