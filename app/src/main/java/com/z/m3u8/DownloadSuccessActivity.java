@@ -26,7 +26,7 @@ public class DownloadSuccessActivity extends AppCompatActivity {
         final String[] filelist=file.list();
 
         VideoSuccessListAdapter adapter = new VideoSuccessListAdapter(this, R.layout.list_item, filelist);
-        ListView listView=findViewById(R.id.listSuccess);
+        ListView listView=findViewById(R.id.listViewDownloadSuccess);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

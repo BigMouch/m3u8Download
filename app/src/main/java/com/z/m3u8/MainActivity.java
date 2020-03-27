@@ -1,10 +1,10 @@
 package com.z.m3u8;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -20,6 +21,9 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.z.m3u8.tool.CallBack;
+import com.z.m3u8.tool.IPlayUrl;
+import com.z.m3u8.webview.WebViewActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,7 +38,6 @@ import jaygoo.library.m3u8downloader.utils.M3U8Log;
 
 import jaygoo.library.m3u8downloader.utils.MUtils;
 import jaygoo.m3u8downloader.FullScreenActivity;
-import jaygoo.m3u8downloader.StorageUtils;
 import jaygoo.m3u8downloader.VideoListAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         dirPath = Constant.PATH;
-       // dirPath = this.getExternalFilesDir(null).getPath() ;
+        // dirPath = this.getExternalFilesDir(null).getPath() ;
         Log.d("M3U8Log", "exists: " + (new File(dirPath).exists()));
         Log.d("M3U8Log", dirPath);
         //common config !
@@ -93,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String text = editText.getText().toString();
+                if(adapter!=null){
+                    adapter.notifyDataSetChanged();
+                }
                 if (text.isEmpty()) return;
 
                 m3U8TaskList.add(new M3U8Task(text));
@@ -102,18 +108,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.btnDownloadSuccess).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,DownloadSuccessActivity.class));
-            }
+        findViewById(R.id.btnDownloadSuccess).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, DownloadSuccessActivity.class)));
+        findViewById(R.id.btnWebView).setOnClickListener(v ->
+                startActivityForResult(new Intent(MainActivity.this, WebViewActivity.class), Activity.RESULT_OK));
+
+        CallBack.get().setPlayListen(url -> {
+
+
+            //二次过滤
+            m3U8TaskList.add(new M3U8Task( url.replace("/480/","/720/")));
+          //  adapter.notifyDataSetChanged();
         });
     }
 
 
-    private void initListView(){
+    private void initListView() {
         adapter = new VideoListAdapter(this, R.layout.list_item, m3U8TaskList);
-        ListView listView =  findViewById(R.id.list_view);
+        ListView listView = findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -144,9 +156,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
-
+        M3U8Task bean0 = new M3U8Task("https://x.1spcdn.com/play/112361/720/play.m3u8");
+        M3U8Task bean00 = new M3U8Task("https://x.1spcdn.com/play/112361/480/play.m3u8");
         M3U8Task bean1 = new M3U8Task("https://www3.laqddc.com/hls/2018/04/07/BQ2cqpyZ/playlist.m3u8");
-       // m3U8TaskList.add(bean0);
+        m3U8TaskList.add(bean0);
+        m3U8TaskList.add(bean00);
         m3U8TaskList.add(bean1);
 
 
@@ -205,6 +219,14 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyChanged(m3U8TaskList, task);
             }
         });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
 
     }
 
