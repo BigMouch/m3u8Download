@@ -18,7 +18,7 @@ public class MyWebViewClient extends WebViewClient {
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
 
         String url=request.getUrl().toString();
-       // Log.d("MyWebViewClient","shouldInterceptRequest----:"+url);
+      // Log.d("MyWebViewClient","shouldInterceptRequest----:"+url); //20030601
         if(url.endsWith(".m3u8?7")){
             Log.d("MyWebViewClient","-------------------"+url);
             CallBack.get().callUrl(url);
@@ -26,6 +26,8 @@ public class MyWebViewClient extends WebViewClient {
         if(url.endsWith(".m3u8")){
             CallBack.get().callUrl(url);
         }
+
+
         return super.shouldInterceptRequest(view, request);
     }
 
