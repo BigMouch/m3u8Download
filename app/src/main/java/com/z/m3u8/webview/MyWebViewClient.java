@@ -21,10 +21,10 @@ public class MyWebViewClient extends WebViewClient {
       // Log.d("MyWebViewClient","shouldInterceptRequest----:"+url); //20030601
         if(url.endsWith(".m3u8?7")){
             Log.d("MyWebViewClient","-------------------"+url);
-            CallBack.get().callUrl(url);
+            CallBack.get().setUrl(url);
         }
         if(url.endsWith(".m3u8")){
-            CallBack.get().callUrl(url);
+            CallBack.get().setUrl(url);
         }
 
 
